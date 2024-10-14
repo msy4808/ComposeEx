@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,25 +39,33 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(modifier: Modifier = Modifier,
-          names: List<String> = listOf("Moon", "Sung", "Woon")
-) {
+fun MyApp(modifier: Modifier = Modifier) {
     var shouldShowOnboarding by remember { mutableStateOf(true) }
 
     Column(modifier = modifier.padding(vertical = 4.dp)) {
         if (shouldShowOnboarding) {
             OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
         } else {
-            for (name in names) {
-                Greeting(name = name)
-            }
+            Greetings()
+        }
+    }
+}
+
+@Composable
+fun Greetings(
+    modifier: Modifier = Modifier,
+    names: List<String> = List(1000) {"$it"}
+) {
+    LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
+        items(items = names) { name ->
+            Greeting(name = name)
         }
     }
 }
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val isClick = remember {mutableStateOf(false)}
+    val isClick = remember { mutableStateOf(false) }
     val extraPadding = if (isClick.value) 48.dp else 0.dp
 
     Surface(
@@ -63,9 +73,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(modifier = modifier.padding(24.dp)) {
-            Column(modifier = modifier
-                .weight(1f)
-                .padding(bottom = extraPadding)) {
+            Column(
+                modifier = modifier
+                    .weight(1f)
+                    .padding(bottom = extraPadding)
+            ) {
                 Text(text = "Hello")
                 Text(text = name)
             }
@@ -83,7 +95,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun OnboardingScreen(modifier: Modifier = Modifier, onContinueClicked: () -> Unit) {
+fun OnboardingScreen(
+    modifier: Modifier = Modifier,
+    onContinueClicked: () -> Unit
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
