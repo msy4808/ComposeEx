@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -70,8 +73,13 @@ fun Greetings(
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     //remember를 사용하는 대신 rememberSaveable 사용 -> 화면 회전등을 하면 버튼 클릭 상태가 초기화되는걸 방지
     //화면이 회전등을 해도 상태를 저장함 (remember는 컴포저블이 컴포지션에 유지되는 동안에만 작동. 만약 화면회전을 하면 모든 상태가 손실됨)
-    val isClick = rememberSaveable { mutableStateOf(false) }
-    val extraPadding = if (isClick.value) 48.dp else 0.dp
+    var isClick by rememberSaveable { mutableStateOf(false) }
+    val extraPadding by animateDpAsState(if (isClick) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
@@ -81,14 +89,14 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             Column(
                 modifier = modifier
                     .weight(1f)
-                    .padding(bottom = extraPadding)
+                    .padding(bottom = extraPadding.coerceAtLeast(0.dp))
             ) {
                 Text(text = "Hello")
                 Text(text = name)
             }
-            ElevatedButton(onClick = { isClick.value = !isClick.value }) {
+            ElevatedButton(onClick = { isClick = !isClick }) {
                 Text(
-                    if (isClick.value) {
+                    if (isClick) {
                         "Show less"
                     } else {
                         "Show more"
