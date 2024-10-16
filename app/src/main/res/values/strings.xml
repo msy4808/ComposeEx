@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">ComposeEx</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
+    <string name="card_desc">Success is not achieved overnight; it is the result of consistent effort, resilience, and the ability to learn from failure while staying focused on long-term goals and growth.</string>
 </resources>
